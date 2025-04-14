@@ -3,10 +3,12 @@ package com.castro.gym.progress.tracker.model.entity.user;
 import com.castro.gym.progress.tracker.model.entity.log.ExerciseLog;
 import com.castro.gym.progress.tracker.model.entity.workout.Workout;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "users")
 public class User {
@@ -16,7 +18,6 @@ public class User {
     private String email;
     private String password;
     private Double height;
-    private Double currentWeight;
     private LocalDate dateOfBirth;
     @OneToMany(mappedBy = "user")
     private List<BodyMeasurement> measurements;

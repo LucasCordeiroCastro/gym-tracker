@@ -1,6 +1,6 @@
 package com.castro.gym.progress.tracker.model.entity.log;
 
-public enum Difficulty {
+public enum SetDifficultyEnum {
     EASY,
     MEDIUM,
     HARD,

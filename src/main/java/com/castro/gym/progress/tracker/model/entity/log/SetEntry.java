@@ -1,7 +1,9 @@
 package com.castro.gym.progress.tracker.model.entity.log;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "set_entries")
 public class SetEntry {
@@ -13,7 +15,7 @@ public class SetEntry {
     private Double weight;
 
     @Enumerated(EnumType.STRING)
-    private Difficulty difficulty;
+    private SetDifficultyEnum setDifficultyEnum;
 
     @ManyToOne
     private ExerciseLog exerciseLog;

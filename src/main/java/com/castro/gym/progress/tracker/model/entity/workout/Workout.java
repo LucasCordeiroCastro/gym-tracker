@@ -2,9 +2,11 @@ package com.castro.gym.progress.tracker.model.entity.workout;
 
 import com.castro.gym.progress.tracker.model.entity.user.User;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "workouts")
 public class Workout {
