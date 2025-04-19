@@ -18,13 +18,8 @@ public class ExerciseController {
         return service.findAll();
     }
 
-    @GetMapping("/group/{muscleGroup}")
-    public List<Exercise> getByGroup(@PathVariable String muscleGroup) {
-        return service.findByMuscleGroup(muscleGroup);
-    }
-
     @PostMapping
-    public Exercise create(@RequestBody Exercise e) {
-        return service.save(e);
+    public Exercise create(@RequestBody Exercise exercise) {
+        return service.save(exercise);
     }
 }

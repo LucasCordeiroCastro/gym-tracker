@@ -4,13 +4,19 @@ import com.castro.gym.progress.tracker.model.entity.workout.Exercise;
 import com.castro.gym.progress.tracker.model.entity.workout.Workout;
 import com.castro.gym.progress.tracker.model.entity.user.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "exercise_logs")
 public class ExerciseLog {

@@ -1,8 +1,10 @@
 package com.castro.gym.progress.tracker.controller;
 
+import com.castro.gym.progress.tracker.model.dto.UserResponse;
 import com.castro.gym.progress.tracker.model.entity.user.User;
 import com.castro.gym.progress.tracker.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +29,10 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public ResponseEntity<UserResponse> createUser(@RequestBody User user) {
+        User newUser = userService.createUser(user);
+        UserResponse userResponse = new UserResponse(newUser.getId(), newUser.getName(), newUser.getEmail());
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 
     @PutMapping("/{id}")

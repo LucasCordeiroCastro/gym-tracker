@@ -1,0 +1,11 @@
+# Create network
+docker network create gym-tracker-network
+
+# Run Postgres
+docker run --name gymtrackerdb -e POSTGRES_PASSWORD=password -e POSTGRES_USER=postgres -e POSTGRES_DB=gymtracker -p 5432:5432 --network gym-tracker-network postgres
+
+# Run PGAdmin 4
+docker run --name pgadmin4-gymtracker -p 15432:80 -e PGADMIN_DEFAULT_EMAIL=admin@admin.com -e PGADMIN_DEFAULT_PASSWORD=admin --network gym-tracker-network dpage/pgadmin4
+
+# Check port
+netstat -aof | findstr {port}

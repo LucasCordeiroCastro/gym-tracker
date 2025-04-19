@@ -1,9 +1,15 @@
 package com.castro.gym.progress.tracker.model.entity.log;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "set_entries")
 public class SetEntry {

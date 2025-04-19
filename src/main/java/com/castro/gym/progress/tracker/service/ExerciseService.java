@@ -16,10 +16,6 @@ public class ExerciseService {
         return exerciseRepository.findAll();
     }
 
-    public List<Exercise> findByMuscleGroup(String group) {
-        return exerciseRepository.findByMuscleGroup(group);
-    }
-
     public Exercise save(Exercise e) {
         return exerciseRepository.save(e);
     }

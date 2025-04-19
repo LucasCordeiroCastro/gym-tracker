@@ -22,7 +22,14 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        return userRepository.save(user);
+        User newUser = User.builder()
+                .name(user.getName())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .height(user.getHeight())
+                .dateOfBirth(user.getDateOfBirth())
+                .build();
+        return userRepository.save(newUser);
     }
 
     public Optional<User> updateUser(Long id, User updatedUser) {
