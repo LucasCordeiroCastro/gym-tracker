@@ -1,8 +1,12 @@
 package com.castro.gym.progress.tracker.service;
 
+import com.castro.gym.progress.tracker.model.dto.UserRequest;
+import com.castro.gym.progress.tracker.model.dto.UserResponse;
 import com.castro.gym.progress.tracker.model.entity.user.User;
+import com.castro.gym.progress.tracker.model.mapper.UserMapper;
 import com.castro.gym.progress.tracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,24 +16,22 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponse> findAllUsers() {
+        return userRepository.findAll().stream().map(userMapper::toResponse).toList();
     }
 
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public UserResponse findById(Long id) {
+        Optional<User> foundUser = userRepository.findById(id);
+        return foundUser.map(userMapper::toResponse)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public User createUser(User user) {
-        User newUser = User.builder()
-                .name(user.getName())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .height(user.getHeight())
-                .dateOfBirth(user.getDateOfBirth())
-                .build();
-        return userRepository.save(newUser);
+    public UserResponse createUser(UserRequest dto) {
+        User newUser = userMapper.toEntity(dto);
+        userRepository.save(newUser);
+        return userMapper.toResponse(newUser);
     }
 
     public Optional<User> updateUser(Long id, User updatedUser) {
@@ -37,7 +39,7 @@ public class UserService {
             user.setName(updatedUser.getName());
             user.setEmail(updatedUser.getEmail());
             user.setHeight(updatedUser.getHeight());
-            user.setDateOfBirth(updatedUser.getDateOfBirth());
+            user.setBirthDate(updatedUser.getBirthDate());
             return userRepository.save(user);
         });
     }

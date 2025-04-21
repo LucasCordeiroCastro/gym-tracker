@@ -24,7 +24,7 @@ public class User {
     private String email;
     private String password;
     private Double height;
-    private LocalDate dateOfBirth;
+    private LocalDate birthDate;
     @OneToMany(mappedBy = "user")
     private List<BodyMeasurement> measurements;
     @OneToMany(mappedBy = "user")

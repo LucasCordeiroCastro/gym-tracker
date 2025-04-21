@@ -34,6 +34,7 @@ public class ExerciseLog {
     @ManyToOne
     private Workout workout;
 
+    @Builder.Default
     @OneToMany(mappedBy = "exerciseLog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SetEntry> sets = new ArrayList<>();
 }

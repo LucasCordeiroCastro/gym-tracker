@@ -1,8 +1,10 @@
 package com.castro.gym.progress.tracker.controller;
 
+import com.castro.gym.progress.tracker.model.dto.UserRequest;
 import com.castro.gym.progress.tracker.model.dto.UserResponse;
 import com.castro.gym.progress.tracker.model.entity.user.User;
 import com.castro.gym.progress.tracker.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,21 +19,18 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
         return userService.findAllUsers();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public UserResponse getUserById(@PathVariable Long id) {
+        return userService.findById(id);
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody User user) {
-        User newUser = userService.createUser(user);
-        UserResponse userResponse = new UserResponse(newUser.getId(), newUser.getName(), newUser.getEmail());
+    public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequest userRequest) {
+        UserResponse userResponse = userService.createUser(userRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 
