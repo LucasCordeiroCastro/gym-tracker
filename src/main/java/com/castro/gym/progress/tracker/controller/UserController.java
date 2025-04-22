@@ -2,12 +2,10 @@ package com.castro.gym.progress.tracker.controller;
 
 import com.castro.gym.progress.tracker.model.dto.UserRequest;
 import com.castro.gym.progress.tracker.model.dto.UserResponse;
-import com.castro.gym.progress.tracker.model.entity.user.User;
 import com.castro.gym.progress.tracker.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +18,7 @@ public class UserController {
 
     @GetMapping
     public List<UserResponse> getAllUsers() {
-        return userService.findAllUsers();
+        return userService.findAll();
     }
 
     @GetMapping("/{id}")
@@ -29,20 +27,19 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequest userRequest) {
-        UserResponse userResponse = userService.createUser(userRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponse createUser(@Valid @RequestBody UserRequest userRequest) {
+        return userService.create(userRequest);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-        return userService.updateUser(id, updatedUser)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public UserResponse updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest updatedUser) {
+        return userService.update(id, updatedUser);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        return userService.deleteUser(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable Long id) {
+        userService.delete(id);
     }
 }

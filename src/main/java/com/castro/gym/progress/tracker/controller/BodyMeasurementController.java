@@ -2,12 +2,10 @@ package com.castro.gym.progress.tracker.controller;
 
 import com.castro.gym.progress.tracker.model.dto.BodyMeasurementRequest;
 import com.castro.gym.progress.tracker.model.dto.BodyMeasurementResponse;
-import com.castro.gym.progress.tracker.model.entity.user.BodyMeasurement;
 import com.castro.gym.progress.tracker.service.BodyMeasurementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +22,8 @@ public class BodyMeasurementController {
     }
 
     @PostMapping
-    public ResponseEntity<BodyMeasurementResponse> registerBodyMeasurement(@RequestBody @Valid BodyMeasurementRequest bodyMeasurementRequest) {
-        BodyMeasurementResponse response = bodyMeasurementService.register(bodyMeasurementRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    @ResponseStatus(HttpStatus.CREATED)
+    public BodyMeasurementResponse registerBodyMeasurement(@RequestBody @Valid BodyMeasurementRequest bodyMeasurementRequest) {
+        return bodyMeasurementService.register(bodyMeasurementRequest);
     }
 }

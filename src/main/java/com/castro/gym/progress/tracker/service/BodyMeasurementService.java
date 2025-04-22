@@ -7,20 +7,31 @@ import com.castro.gym.progress.tracker.model.entity.user.User;
 import com.castro.gym.progress.tracker.model.mapper.BodyMeasurementMapper;
 import com.castro.gym.progress.tracker.repository.BodyMeasurementRepository;
 import com.castro.gym.progress.tracker.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
-public class BodyMeasurementService {
-    private final BodyMeasurementRepository bodyMeasurementRepository;
+public class BodyMeasurementService extends AbstractCrudService<
+        BodyMeasurement,
+        Long,
+        BodyMeasurementRequest,
+        BodyMeasurementResponse
+        > {
+
     private final UserRepository userRepository;
     private final BodyMeasurementMapper bodyMeasurementMapper;
 
+    public BodyMeasurementService(BodyMeasurementRepository repo,
+                                  BodyMeasurementMapper bodyMeasurementMapper,
+                                  UserRepository userRepository) {
+        super(repo, bodyMeasurementMapper::toEntity, bodyMeasurementMapper::toResponse, bodyMeasurementMapper::updateFromDto);
+        this.userRepository = userRepository;
+        this.bodyMeasurementMapper = bodyMeasurementMapper;
+    }
+
     public List<BodyMeasurementResponse> findByUser(Long userId) {
-        return bodyMeasurementRepository.findByUserIdOrderByDateAsc(userId).stream()
+        return ((BodyMeasurementRepository) repo).findByUserIdOrderByDateAsc(userId).stream()
                 .map(bodyMeasurementMapper::toResponse).toList();
     }
 
@@ -31,7 +42,7 @@ public class BodyMeasurementService {
         BodyMeasurement bodyMeasurement = bodyMeasurementMapper.toEntity(dto);
         bodyMeasurement.setUser(user);
 
-        BodyMeasurement saved = bodyMeasurementRepository.save(bodyMeasurement);
+        BodyMeasurement saved = repo.save(bodyMeasurement);
         return bodyMeasurementMapper.toResponse(saved);
     }
 }

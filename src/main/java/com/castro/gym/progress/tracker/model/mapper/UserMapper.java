@@ -4,12 +4,16 @@ import com.castro.gym.progress.tracker.model.dto.UserRequest;
 import com.castro.gym.progress.tracker.model.dto.UserResponse;
 import com.castro.gym.progress.tracker.model.entity.user.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(
         componentModel = "spring",
-        builder = @org.mapstruct.Builder(disableBuilder = true)
+        builder = @org.mapstruct.Builder(disableBuilder = true),
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface UserMapper {
     User toEntity(UserRequest dto);
     UserResponse toResponse(User entity);
+    void updateFromDto(UserRequest dto, @MappingTarget User entity);
 }
