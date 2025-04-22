@@ -1,7 +1,7 @@
 package com.castro.gym.progress.tracker.controller;
 
-import com.castro.gym.progress.tracker.model.dto.UserRequest;
-import com.castro.gym.progress.tracker.model.dto.UserResponse;
+import com.castro.gym.progress.tracker.model.dto.request.UserRequest;
+import com.castro.gym.progress.tracker.model.dto.response.UserResponse;
 import com.castro.gym.progress.tracker.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RestController
 @RequestMapping("/api/v1/users")
+@RestController
 public class UserController {
     private final UserService userService;
 

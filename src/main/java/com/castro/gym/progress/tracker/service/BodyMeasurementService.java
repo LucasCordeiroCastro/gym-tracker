@@ -1,7 +1,7 @@
 package com.castro.gym.progress.tracker.service;
 
-import com.castro.gym.progress.tracker.model.dto.BodyMeasurementRequest;
-import com.castro.gym.progress.tracker.model.dto.BodyMeasurementResponse;
+import com.castro.gym.progress.tracker.model.dto.request.BodyMeasurementRequest;
+import com.castro.gym.progress.tracker.model.dto.response.BodyMeasurementResponse;
 import com.castro.gym.progress.tracker.model.entity.user.BodyMeasurement;
 import com.castro.gym.progress.tracker.model.entity.user.User;
 import com.castro.gym.progress.tracker.model.mapper.BodyMeasurementMapper;

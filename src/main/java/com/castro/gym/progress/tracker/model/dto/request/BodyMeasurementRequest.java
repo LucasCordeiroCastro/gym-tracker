@@ -1,4 +1,4 @@
-package com.castro.gym.progress.tracker.model.dto;
+package com.castro.gym.progress.tracker.model.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 

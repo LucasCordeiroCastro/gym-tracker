@@ -1,7 +1,7 @@
 package com.castro.gym.progress.tracker.controller;
 
-import com.castro.gym.progress.tracker.model.dto.BodyMeasurementRequest;
-import com.castro.gym.progress.tracker.model.dto.BodyMeasurementResponse;
+import com.castro.gym.progress.tracker.model.dto.request.BodyMeasurementRequest;
+import com.castro.gym.progress.tracker.model.dto.response.BodyMeasurementResponse;
 import com.castro.gym.progress.tracker.service.BodyMeasurementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RestController
 @RequestMapping("/api/v1/body-measurements")
+@RestController
 public class BodyMeasurementController {
     private final BodyMeasurementService bodyMeasurementService;
 

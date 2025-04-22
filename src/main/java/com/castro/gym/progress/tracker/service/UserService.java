@@ -1,7 +1,7 @@
 package com.castro.gym.progress.tracker.service;
 
-import com.castro.gym.progress.tracker.model.dto.UserRequest;
-import com.castro.gym.progress.tracker.model.dto.UserResponse;
+import com.castro.gym.progress.tracker.model.dto.request.UserRequest;
+import com.castro.gym.progress.tracker.model.dto.response.UserResponse;
 import com.castro.gym.progress.tracker.model.entity.user.User;
 import com.castro.gym.progress.tracker.model.mapper.UserMapper;
 import com.castro.gym.progress.tracker.repository.UserRepository;
