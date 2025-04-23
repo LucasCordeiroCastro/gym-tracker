@@ -1,0 +1,27 @@
+services:
+  db-postgres:
+    image: postgres:15
+    container_name: postgres-gym.progress.tracker
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: gymtracker
+    networks:
+      - gym-tracker-network
+
+  pgadmin4:
+    image: dpage/pgadmin4:9.2.0
+    container_name: pgadmin4-gym.progress.tracker
+    ports:
+      - "15432:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    networks:
+      - gym-tracker-network
+
+networks:
+  gym-tracker-network:
+    driver: bridge

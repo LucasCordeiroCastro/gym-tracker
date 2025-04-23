@@ -1,7 +1,6 @@
 package com.castro.gym.progress.tracker.service;
 
 import com.castro.gym.progress.tracker.config.NotFoundException;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
