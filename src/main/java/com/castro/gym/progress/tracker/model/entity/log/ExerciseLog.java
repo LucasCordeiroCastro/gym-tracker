@@ -1,8 +1,8 @@
 package com.castro.gym.progress.tracker.model.entity.log;
 
+import com.castro.gym.progress.tracker.model.entity.user.User;
 import com.castro.gym.progress.tracker.model.entity.workout.Exercise;
 import com.castro.gym.progress.tracker.model.entity.workout.Workout;
-import com.castro.gym.progress.tracker.model.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +20,8 @@ import java.util.List;
 @Entity
 @Table(name = "exercise_logs")
 public class ExerciseLog {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
     private LocalDate date;
     private String comment;

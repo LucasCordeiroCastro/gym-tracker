@@ -27,8 +27,8 @@ public class Exercise {
     private List<MuscleGroupEnum> muscleGroups;
 
     @OneToMany(mappedBy = "exercise")
-    private List<WorkoutExercise> workoutLinks;
+    private List<WorkoutExercise> workoutExercises;
 
     @OneToMany(mappedBy = "exercise")
-    private List<ExerciseLog> logs;
+    private List<ExerciseLog> exerciseLogs;
 }

@@ -2,12 +2,10 @@ package com.castro.gym.progress.tracker.controller;
 
 import com.castro.gym.progress.tracker.model.dto.request.WorkoutRequest;
 import com.castro.gym.progress.tracker.model.dto.response.WorkoutResponse;
-import com.castro.gym.progress.tracker.model.entity.workout.Workout;
 import com.castro.gym.progress.tracker.service.WorkoutService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,13 +27,13 @@ public class WorkoutController {
     }
 
     @GetMapping("/{id}")
-    public WorkoutResponse getWorkout(@PathVariable Long id) {
+    public WorkoutResponse getWorkoutById(@PathVariable Long id) {
         return workoutService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public WorkoutResponse updateWorkout(@PathVariable Long id, @Valid @RequestBody WorkoutRequest updated) {
-        return workoutService.update(id, updated);
+    public WorkoutResponse updateWorkout(@PathVariable Long id, @Valid @RequestBody WorkoutRequest updatedWorkout) {
+        return workoutService.update(id, updatedWorkout);
     }
 
     @DeleteMapping("/{id}")

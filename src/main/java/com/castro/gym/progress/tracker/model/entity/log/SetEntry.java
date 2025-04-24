@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "set_entries")
 public class SetEntry {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
-    private Integer setOrder;
     private Integer reps;
     private Double weight;
 

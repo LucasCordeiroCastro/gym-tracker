@@ -53,7 +53,7 @@ public class WorkoutService extends AbstractCrudService<
     public WorkoutResponse create(WorkoutRequest dto) {
         Workout workout = workoutMapper.toEntity(dto);
 
-        User user = fetchUserOrThrow(dto.userId());
+        User user = fetchUser(dto.userId());
         workout.setUser(user);
 
         List<WorkoutExercise> workoutExercises = buildWorkoutExercises(dto.exerciseIds(), workout);
@@ -69,7 +69,7 @@ public class WorkoutService extends AbstractCrudService<
 
         workoutMapper.updateFromDto(dto, workout);
 
-        User user = fetchUserOrThrow(dto.userId());
+        User user = fetchUser(dto.userId());
         workout.setUser(user);
 
         List<WorkoutExercise> workoutExercises = buildWorkoutExercises(dto.exerciseIds(), workout);
@@ -78,7 +78,7 @@ public class WorkoutService extends AbstractCrudService<
         return workoutMapper.toResponse(workoutRepository.save(workout));
     }
 
-    private User fetchUserOrThrow(Long userId) {
+    private User fetchUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found: " + userId));
     }

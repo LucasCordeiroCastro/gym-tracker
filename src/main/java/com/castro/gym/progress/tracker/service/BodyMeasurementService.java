@@ -1,5 +1,6 @@
 package com.castro.gym.progress.tracker.service;
 
+import com.castro.gym.progress.tracker.config.NotFoundException;
 import com.castro.gym.progress.tracker.model.dto.request.BodyMeasurementRequest;
 import com.castro.gym.progress.tracker.model.dto.response.BodyMeasurementResponse;
 import com.castro.gym.progress.tracker.model.entity.user.BodyMeasurement;
@@ -35,9 +36,10 @@ public class BodyMeasurementService extends AbstractCrudService<
                 .map(bodyMeasurementMapper::toResponse).toList();
     }
 
-    public BodyMeasurementResponse register(BodyMeasurementRequest dto) {
+    @Override
+    public BodyMeasurementResponse create(BodyMeasurementRequest dto) {
         User user = userRepository.findById(dto.userId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         BodyMeasurement bodyMeasurement = bodyMeasurementMapper.toEntity(dto);
         bodyMeasurement.setUser(user);

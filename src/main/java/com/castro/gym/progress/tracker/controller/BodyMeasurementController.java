@@ -17,13 +17,29 @@ public class BodyMeasurementController {
     private final BodyMeasurementService bodyMeasurementService;
 
     @GetMapping("/user/{userId}")
-    public List<BodyMeasurementResponse> getByUser(@PathVariable Long userId) {
+    public List<BodyMeasurementResponse> getAllByUser(@PathVariable Long userId) {
         return bodyMeasurementService.findByUser(userId);
+    }
+
+    @GetMapping("/{id}")
+    public BodyMeasurementResponse getBodyMeasurementById(@PathVariable Long id) {
+        return bodyMeasurementService.findById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BodyMeasurementResponse registerBodyMeasurement(@RequestBody @Valid BodyMeasurementRequest bodyMeasurementRequest) {
-        return bodyMeasurementService.register(bodyMeasurementRequest);
+    public BodyMeasurementResponse createBodyMeasurement(@Valid @RequestBody BodyMeasurementRequest bodyMeasurementRequest) {
+        return bodyMeasurementService.create(bodyMeasurementRequest);
+    }
+
+    @PutMapping("/{id}")
+    public BodyMeasurementResponse updateBodyMeasurement(@PathVariable Long id, @Valid @RequestBody BodyMeasurementRequest updatedBodyMeasurement) {
+        return bodyMeasurementService.update(id, updatedBodyMeasurement);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteBodyMeasurement(@PathVariable Long id) {
+        bodyMeasurementService.delete(id);
     }
 }

@@ -15,8 +15,8 @@ public class UserService extends AbstractCrudService<
         UserResponse
         > {
 
-    public UserService(UserRepository repo, UserMapper userMapper) {
-        super(repo, userMapper::toEntity, userMapper::toResponse, userMapper::updateFromDto);
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
+        super(userRepository, userMapper::toEntity, userMapper::toResponse, userMapper::updateFromDto);
     }
 
 }
