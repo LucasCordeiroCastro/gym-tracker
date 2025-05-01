@@ -16,20 +16,15 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping
-    public List<UserResponse> getAllUsers() {
-        return userService.findAll();
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponse createUser(@Valid @RequestBody UserRequest userRequest) {
+        return userService.create(userRequest);
     }
 
     @GetMapping("/{id}")
     public UserResponse getUserById(@PathVariable Long id) {
         return userService.findById(id);
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse createUser(@Valid @RequestBody UserRequest userRequest) {
-        return userService.create(userRequest);
     }
 
     @PutMapping("/{id}")

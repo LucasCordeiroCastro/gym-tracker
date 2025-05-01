@@ -1,6 +1,7 @@
 package com.castro.gym.progress.tracker.service;
 
 import com.castro.gym.progress.tracker.config.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public abstract class AbstractCrudService<
         Entity,
         Id,
@@ -19,17 +21,17 @@ public abstract class AbstractCrudService<
     protected final Function<Entity, ResponseDTO> toResponse;
     protected final BiConsumer<RequestDTO, Entity> updateFromDto;
 
-    protected AbstractCrudService(
-            JpaRepository<Entity, Id> repo,
-            Function<RequestDTO, Entity> toEntity,
-            Function<Entity, ResponseDTO> toResponse,
-            BiConsumer<RequestDTO, Entity> updateFromDto
-    ) {
-        this.repo = repo;
-        this.toEntity = toEntity;
-        this.toResponse = toResponse;
-        this.updateFromDto = updateFromDto;
-    }
+//    protected AbstractCrudService(
+//            JpaRepository<Entity, Id> repo,
+//            Function<RequestDTO, Entity> toEntity,
+//            Function<Entity, ResponseDTO> toResponse,
+//            BiConsumer<RequestDTO, Entity> updateFromDto
+//    ) {
+//        this.repo = repo;
+//        this.toEntity = toEntity;
+//        this.toResponse = toResponse;
+//        this.updateFromDto = updateFromDto;
+//    }
 
     public List<ResponseDTO> findAll() {
         return repo.findAll()
