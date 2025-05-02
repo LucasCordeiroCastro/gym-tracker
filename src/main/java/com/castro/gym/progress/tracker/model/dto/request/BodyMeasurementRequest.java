@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public record BodyMeasurementRequest(
-        @NotNull(message = "User ID is required") Long userId,
         @NotNull(message = "Date is required") LocalDate date,
         Double weight,
         Double waist,

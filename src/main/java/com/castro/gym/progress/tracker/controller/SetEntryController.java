@@ -21,11 +21,6 @@ public class SetEntryController {
         return setEntryService.findByExerciseLog(logId);
     }
 
-    @GetMapping
-    public List<SetEntryResponse> getAllSetEntries() {
-        return setEntryService.findAll();
-    }
-
     @GetMapping("/{id}")
     public SetEntryResponse getSetEntryById(@PathVariable Long id) {
         return setEntryService.findById(id);
@@ -46,5 +41,11 @@ public class SetEntryController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSetEntry(@PathVariable Long id) {
         setEntryService.delete(id);
+    }
+
+    // ADMIN
+    @GetMapping
+    public List<SetEntryResponse> getAllSetEntries() {
+        return setEntryService.findAll();
     }
 }

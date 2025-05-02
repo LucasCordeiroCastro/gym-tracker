@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface ExerciseLogRepository extends JpaRepository<ExerciseLog, Long> {
     List<ExerciseLog> findByUserIdAndExerciseIdOrderByDateDesc(Long userId, Long exerciseId);
+    List<ExerciseLog> findByUserIdOrderByDateDesc(Long userId);
     List<ExerciseLog> findByWorkoutIdAndDate(Long workoutId, LocalDate date);
 }

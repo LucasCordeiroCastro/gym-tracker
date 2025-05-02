@@ -20,15 +20,32 @@ import java.util.List;
 public class User {
     @Id @GeneratedValue
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private GenderEnum gender;
+
+    @Column(nullable = false)
     private Double height;
+
+    @Column(nullable = false)
     private LocalDate birthDate;
+
     @OneToMany(mappedBy = "user")
     private List<BodyMeasurement> measurements;
+
     @OneToMany(mappedBy = "user")
     private List<Workout> workouts;
+
     @OneToMany(mappedBy = "user")
     private List<ExerciseLog> logs;
 }

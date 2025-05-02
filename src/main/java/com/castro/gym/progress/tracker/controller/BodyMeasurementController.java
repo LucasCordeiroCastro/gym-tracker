@@ -16,20 +16,20 @@ import java.util.List;
 public class BodyMeasurementController {
     private final BodyMeasurementService bodyMeasurementService;
 
-    @GetMapping("/user/{userId}")
-    public List<BodyMeasurementResponse> getAllByUser(@PathVariable Long userId) {
-        return bodyMeasurementService.findByUser(userId);
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public BodyMeasurementResponse createBodyMeasurement(@Valid @RequestBody BodyMeasurementRequest bodyMeasurementRequest) {
+        return bodyMeasurementService.create(bodyMeasurementRequest);
+    }
+
+    @GetMapping("/user")
+    public List<BodyMeasurementResponse> getAllByUser() {
+        return bodyMeasurementService.findByUser();
     }
 
     @GetMapping("/{id}")
     public BodyMeasurementResponse getBodyMeasurementById(@PathVariable Long id) {
         return bodyMeasurementService.findById(id);
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public BodyMeasurementResponse createBodyMeasurement(@Valid @RequestBody BodyMeasurementRequest bodyMeasurementRequest) {
-        return bodyMeasurementService.create(bodyMeasurementRequest);
     }
 
     @PutMapping("/{id}")

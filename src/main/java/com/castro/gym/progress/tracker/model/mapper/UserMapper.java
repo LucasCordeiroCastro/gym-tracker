@@ -1,6 +1,7 @@
 package com.castro.gym.progress.tracker.model.mapper;
 
-import com.castro.gym.progress.tracker.model.dto.request.UserRequest;
+import com.castro.gym.progress.tracker.model.dto.request.CreateUserRequest;
+import com.castro.gym.progress.tracker.model.dto.request.UpdateUserRequest;
 import com.castro.gym.progress.tracker.model.dto.response.UserResponse;
 import com.castro.gym.progress.tracker.model.entity.user.User;
 import org.mapstruct.Mapper;
@@ -18,13 +19,14 @@ public interface UserMapper {
     @Mapping(target = "measurements", ignore = true)
     @Mapping(target = "workouts", ignore = true)
     @Mapping(target = "logs", ignore = true)
-    User toEntity(UserRequest dto);
+    User toEntity(CreateUserRequest dto);
 
     UserResponse toResponse(User entity);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true)
     @Mapping(target = "measurements", ignore = true)
     @Mapping(target = "workouts", ignore = true)
     @Mapping(target = "logs", ignore = true)
-    void updateFromDto(UserRequest dto, @MappingTarget User entity);
+    void updateFromDto(UpdateUserRequest dto, @MappingTarget User entity);
 }

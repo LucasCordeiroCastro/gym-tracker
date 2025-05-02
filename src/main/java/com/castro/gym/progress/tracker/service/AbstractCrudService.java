@@ -21,18 +21,6 @@ public abstract class AbstractCrudService<
     protected final Function<Entity, ResponseDTO> toResponse;
     protected final BiConsumer<RequestDTO, Entity> updateFromDto;
 
-//    protected AbstractCrudService(
-//            JpaRepository<Entity, Id> repo,
-//            Function<RequestDTO, Entity> toEntity,
-//            Function<Entity, ResponseDTO> toResponse,
-//            BiConsumer<RequestDTO, Entity> updateFromDto
-//    ) {
-//        this.repo = repo;
-//        this.toEntity = toEntity;
-//        this.toResponse = toResponse;
-//        this.updateFromDto = updateFromDto;
-//    }
-
     public List<ResponseDTO> findAll() {
         return repo.findAll()
                 .stream()

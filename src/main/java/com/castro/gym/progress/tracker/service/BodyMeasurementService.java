@@ -7,44 +7,53 @@ import com.castro.gym.progress.tracker.model.entity.user.BodyMeasurement;
 import com.castro.gym.progress.tracker.model.entity.user.User;
 import com.castro.gym.progress.tracker.model.mapper.BodyMeasurementMapper;
 import com.castro.gym.progress.tracker.repository.BodyMeasurementRepository;
-import com.castro.gym.progress.tracker.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
-public class BodyMeasurementService extends AbstractCrudService<
-        BodyMeasurement,
-        Long,
-        BodyMeasurementRequest,
-        BodyMeasurementResponse
-        > {
-
-    private final UserRepository userRepository;
+public class BodyMeasurementService {
+    private final BodyMeasurementRepository bodyMeasurementRepository;
     private final BodyMeasurementMapper bodyMeasurementMapper;
+    private final UserAuthorizationHelper userAuthorizationHelper;
 
-    public BodyMeasurementService(BodyMeasurementRepository repo,
-                                  BodyMeasurementMapper bodyMeasurementMapper,
-                                  UserRepository userRepository) {
-        super(repo, bodyMeasurementMapper::toEntity, bodyMeasurementMapper::toResponse, bodyMeasurementMapper::updateFromDto);
-        this.userRepository = userRepository;
-        this.bodyMeasurementMapper = bodyMeasurementMapper;
-    }
-
-    public List<BodyMeasurementResponse> findByUser(Long userId) {
-        return ((BodyMeasurementRepository) repo).findByUserIdOrderByDateAsc(userId).stream()
-                .map(bodyMeasurementMapper::toResponse).toList();
-    }
-
-    @Override
     public BodyMeasurementResponse create(BodyMeasurementRequest dto) {
-        User user = userRepository.findById(dto.userId())
-                .orElseThrow(() -> new NotFoundException("User not found"));
-
+        User user = userAuthorizationHelper.getAuthenticatedUser();
         BodyMeasurement bodyMeasurement = bodyMeasurementMapper.toEntity(dto);
         bodyMeasurement.setUser(user);
 
-        BodyMeasurement saved = repo.save(bodyMeasurement);
-        return bodyMeasurementMapper.toResponse(saved);
+        return bodyMeasurementMapper.toResponse(bodyMeasurementRepository.save(bodyMeasurement));
+    }
+
+    public List<BodyMeasurementResponse> findByUser() {
+        Long userId = userAuthorizationHelper.getAuthenticatedUserId();
+        return bodyMeasurementRepository.findByUserIdOrderByDateDesc(userId).stream()
+                .map(bodyMeasurementMapper::toResponse).toList();
+    }
+
+    public BodyMeasurementResponse findById(Long id) {
+        Long userId = userAuthorizationHelper.getAuthenticatedUserId();
+        return bodyMeasurementRepository.findByIdAndUserId(id, userId)
+                .map(bodyMeasurementMapper::toResponse)
+                .orElseThrow(() -> new NotFoundException(String.format("Body measurement with id %d was not found", id)));
+    }
+
+    public BodyMeasurementResponse update(Long id, BodyMeasurementRequest updatedBodyMeasurement) {
+        Long userId = userAuthorizationHelper.getAuthenticatedUserId();
+        BodyMeasurement existing = bodyMeasurementRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new NotFoundException(String.format("Body measurement with id %d was not found", id)));
+
+        bodyMeasurementMapper.updateFromDto(updatedBodyMeasurement, existing);
+        return bodyMeasurementMapper.toResponse(bodyMeasurementRepository.save(existing));
+    }
+
+    public void delete(Long id) {
+        Long userId = userAuthorizationHelper.getAuthenticatedUserId();
+        BodyMeasurement existing = bodyMeasurementRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new NotFoundException(String.format("Body measurement with id %d was not found", id)));
+
+        bodyMeasurementRepository.delete(existing);
     }
 }

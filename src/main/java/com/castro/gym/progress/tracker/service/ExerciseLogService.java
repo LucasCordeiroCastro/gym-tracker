@@ -55,6 +55,13 @@ public class ExerciseLogService extends AbstractCrudService<
                 .toList();
     }
 
+    public List<ExerciseLogResponse> findLogsByUser(Long userId) {
+        return exerciseLogRepository.findByUserIdOrderByDateDesc(userId)
+                .stream()
+                .map(exerciseLogMapper::toResponse)
+                .toList();
+    }
+
     @Override
     public ExerciseLogResponse create(ExerciseLogRequest dto) {
         ExerciseLog exerciseLog = exerciseLogMapper.toEntity(dto);

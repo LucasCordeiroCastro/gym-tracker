@@ -1,6 +1,8 @@
 package com.castro.gym.progress.tracker.controller;
 
-import com.castro.gym.progress.tracker.model.dto.request.UserRequest;
+import com.castro.gym.progress.tracker.model.dto.request.CreateUserRequest;
+import com.castro.gym.progress.tracker.model.dto.request.UpdatePasswordRequest;
+import com.castro.gym.progress.tracker.model.dto.request.UpdateUserRequest;
 import com.castro.gym.progress.tracker.model.dto.response.UserResponse;
 import com.castro.gym.progress.tracker.service.UserService;
 import jakarta.validation.Valid;
@@ -9,30 +11,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/user")
 @RestController
 public class UserController {
     private final UserService userService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse createUser(@Valid @RequestBody UserRequest userRequest) {
-        return userService.create(userRequest);
+    public UserResponse createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
+        return userService.createUser(createUserRequest);
     }
 
-    @GetMapping("/{id}")
-    public UserResponse getUserById(@PathVariable Long id) {
-        return userService.findById(id);
+    @GetMapping
+    public UserResponse getUserDetails() {
+        return userService.getUser();
     }
 
-    @PutMapping("/{id}")
-    public UserResponse updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest updatedUser) {
-        return userService.update(id, updatedUser);
+    @PutMapping
+    public UserResponse updateUser(@Valid @RequestBody UpdateUserRequest updatedUser) {
+        return userService.updateUser(updatedUser);
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable Long id) {
-        userService.delete(id);
+    @PutMapping("/password")
+    public UserResponse updatePassword(@Valid @RequestBody UpdatePasswordRequest updatedPassword) {
+        return userService.updatePassword(updatedPassword);
     }
 }
