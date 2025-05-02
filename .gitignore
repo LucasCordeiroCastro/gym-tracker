@@ -3,6 +3,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+src/main/resources/app-pkcs8.key
+src/main/resources/app-public.key
 
 ### STS ###
 .apt_generated

@@ -27,7 +27,7 @@ public class SetEntryService extends AbstractCrudService<
     }
 
     public List<SetEntryResponse> findByExerciseLog(Long logId) {
-        return setEntryRepository.findByExerciseLogIdOrderBySetOrderAsc(logId)
+        return setEntryRepository.findByExerciseLogId(logId)
                 .stream()
                 .map(setEntryMapper::toResponse)
                 .toList();

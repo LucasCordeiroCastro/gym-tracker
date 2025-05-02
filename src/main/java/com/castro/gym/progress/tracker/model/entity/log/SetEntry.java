@@ -21,7 +21,9 @@ public class SetEntry {
     private Double weight;
 
     @Enumerated(EnumType.STRING)
-    private SetDifficultyEnum setDifficultyEnum;
+    @Column(nullable = false)
+    @Builder.Default
+    private SetDifficultyEnum difficulty = SetDifficultyEnum.UNSPECIFIED;
 
     @ManyToOne
     private ExerciseLog exerciseLog;

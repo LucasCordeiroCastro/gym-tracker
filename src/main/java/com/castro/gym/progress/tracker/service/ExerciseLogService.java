@@ -2,12 +2,15 @@ package com.castro.gym.progress.tracker.service;
 
 import com.castro.gym.progress.tracker.config.NotFoundException;
 import com.castro.gym.progress.tracker.model.dto.request.ExerciseLogRequest;
+import com.castro.gym.progress.tracker.model.dto.request.SetEntryRequest;
 import com.castro.gym.progress.tracker.model.dto.response.ExerciseLogResponse;
 import com.castro.gym.progress.tracker.model.entity.log.ExerciseLog;
+import com.castro.gym.progress.tracker.model.entity.log.SetEntry;
 import com.castro.gym.progress.tracker.model.entity.user.User;
 import com.castro.gym.progress.tracker.model.entity.workout.Exercise;
 import com.castro.gym.progress.tracker.model.entity.workout.Workout;
 import com.castro.gym.progress.tracker.model.mapper.ExerciseLogMapper;
+import com.castro.gym.progress.tracker.model.mapper.SetEntryMapper;
 import com.castro.gym.progress.tracker.repository.ExerciseLogRepository;
 import com.castro.gym.progress.tracker.repository.ExerciseRepository;
 import com.castro.gym.progress.tracker.repository.UserRepository;
@@ -15,6 +18,9 @@ import com.castro.gym.progress.tracker.repository.WorkoutRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class ExerciseLogService extends AbstractCrudService<
@@ -26,15 +32,17 @@ public class ExerciseLogService extends AbstractCrudService<
 
     private final ExerciseLogRepository exerciseLogRepository;
     private final ExerciseLogMapper exerciseLogMapper;
+    private final SetEntryMapper setEntryMapper;
     private final UserRepository userRepository;
     private final ExerciseRepository exerciseRepository;
     private final WorkoutRepository workoutRepository;
 
-    public ExerciseLogService(ExerciseLogRepository exerciseLogRepository, ExerciseLogMapper exerciseLogMapper,
+    public ExerciseLogService(ExerciseLogRepository exerciseLogRepository, ExerciseLogMapper exerciseLogMapper, SetEntryMapper setEntryMapper,
                               UserRepository userRepository, ExerciseRepository exerciseRepository, WorkoutRepository workoutRepository) {
         super(exerciseLogRepository, exerciseLogMapper::toEntity, exerciseLogMapper::toResponse, exerciseLogMapper::updateFromDto);
         this.exerciseLogRepository = exerciseLogRepository;
         this.exerciseLogMapper = exerciseLogMapper;
+        this.setEntryMapper = setEntryMapper;
         this.userRepository = userRepository;
         this.exerciseRepository = exerciseRepository;
         this.workoutRepository = workoutRepository;
@@ -54,9 +62,10 @@ public class ExerciseLogService extends AbstractCrudService<
         exerciseLog.setUser(fetchUser(dto.userId()));
         exerciseLog.setExercise(fetchExercise(dto.exerciseId()));
 
-        if (dto.workoutId() != null) {
-            exerciseLog.setWorkout(fetchWorkout(dto.workoutId()));
-        }
+        if (dto.workoutId() != null) exerciseLog.setWorkout(fetchWorkout(dto.workoutId()));
+
+        if (exerciseLog.getSets() != null) exerciseLog.getSets().forEach(set -> set.setExerciseLog(exerciseLog));
+
         return exerciseLogMapper.toResponse(exerciseLogRepository.save(exerciseLog));
     }
 
@@ -69,12 +78,31 @@ public class ExerciseLogService extends AbstractCrudService<
 
         exerciseLog.setUser(fetchUser(dto.userId()));
         exerciseLog.setExercise(fetchExercise(dto.exerciseId()));
+        if (dto.workoutId() != null) exerciseLog.setWorkout(fetchWorkout(dto.workoutId()));
+        else exerciseLog.setWorkout(null);
 
-        if (dto.workoutId() != null) {
-            exerciseLog.setWorkout(fetchWorkout(dto.workoutId()));
+        Map<Long, SetEntry> existingSetMap = exerciseLog.getSets().stream()
+                .filter(s -> s.getId() != null)
+                .collect(Collectors.toMap(SetEntry::getId, Function.identity()));
+
+        exerciseLog.getSets().removeIf(existing ->
+                dto.sets().stream().noneMatch(s -> s.id() != null && s.id().equals(existing.getId()))
+        );
+
+        for (SetEntryRequest setDto : dto.sets()) {
+            if (setDto.id() != null && existingSetMap.containsKey(setDto.id())) {
+                SetEntry existing = existingSetMap.get(setDto.id());
+                setEntryMapper.updateFromDto(setDto, existing);
+            } else {
+                SetEntry newEntry = setEntryMapper.toEntity(setDto);
+                newEntry.setExerciseLog(exerciseLog);
+                exerciseLog.getSets().add(newEntry);
+            }
         }
+
         return exerciseLogMapper.toResponse(exerciseLogRepository.save(exerciseLog));
     }
+
 
     private User fetchUser(Long userId) {
         return userRepository.findById(userId)

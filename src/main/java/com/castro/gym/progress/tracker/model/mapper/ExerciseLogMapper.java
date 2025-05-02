@@ -8,6 +8,7 @@ import org.mapstruct.*;
 
 @Mapper(
         componentModel = "spring",
+        uses = {SetEntryMapper.class},
         builder = @org.mapstruct.Builder(disableBuilder = true),
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
