@@ -12,6 +12,22 @@ spring:
     properties:
       hibernate.format_sql: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,httptrace,loggers
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+  api-docs:
+    path: /v3/api-docs
+
 jwt:
   private:
     key: classpath:app-pkcs8.key
