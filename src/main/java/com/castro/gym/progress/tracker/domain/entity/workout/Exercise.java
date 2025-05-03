@@ -1,5 +1,6 @@
 package com.castro.gym.progress.tracker.domain.entity.workout;
 
+import com.castro.gym.progress.tracker.domain.enums.MuscleGroup;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,15 +16,16 @@ import java.util.List;
 @Entity
 @Table(name = "exercises")
 public class Exercise {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
     private String name;
 
-    @ElementCollection(targetClass = MuscleGroupEnum.class)
+    @ElementCollection(targetClass = MuscleGroup.class)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "exercise_muscle_groups", joinColumns = @JoinColumn(name = "exercise_id"))
     @Column(name = "muscle_group")
-    private List<MuscleGroupEnum> muscleGroups;
+    private List<MuscleGroup> muscleGroups;
 
     @OneToMany(mappedBy = "exercise")
     private List<WorkoutExercise> workoutExercises;

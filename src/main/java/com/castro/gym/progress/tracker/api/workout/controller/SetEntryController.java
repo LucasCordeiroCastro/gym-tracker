@@ -12,40 +12,36 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/set-entries")
+@RequestMapping("/api/v1/exercise-logs/{exerciseLogId}/sets")
 public class SetEntryController {
     private final SetEntryService setEntryService;
 
-    @GetMapping("/log/{logId}")
-    public List<SetEntryResponse> getSetsByExerciseLog(@PathVariable Long logId) {
-        return setEntryService.findByExerciseLog(logId);
+    @GetMapping
+    public List<SetEntryResponse> getSetsByExerciseLogId(@PathVariable Long exerciseLogId) {
+        return setEntryService.findAllByExerciseLogId(exerciseLogId);
     }
 
-    @GetMapping("/{id}")
-    public SetEntryResponse getSetEntryById(@PathVariable Long id) {
-        return setEntryService.findById(id);
+    @GetMapping("/{setId}")
+    public SetEntryResponse getSetEntryById(@PathVariable Long exerciseLogId, @PathVariable Long setId) {
+        return setEntryService.findById(setId, exerciseLogId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SetEntryResponse createSetEntry(@Valid @RequestBody SetEntryRequest setEntryRequest) {
-        return setEntryService.create(setEntryRequest);
+    public SetEntryResponse createSetEntry(@PathVariable Long exerciseLogId,
+                                           @Valid @RequestBody SetEntryRequest setEntryRequest) {
+        return setEntryService.create(exerciseLogId, setEntryRequest);
     }
 
-    @PutMapping("/{id}")
-    public SetEntryResponse updateSetEntry(@PathVariable Long id, @Valid @RequestBody SetEntryRequest updatedSetEntry) {
-        return setEntryService.update(id, updatedSetEntry);
+    @PutMapping("/{setId}")
+    public SetEntryResponse updateSetEntry(@PathVariable Long exerciseLogId, @PathVariable Long setId,
+                                           @Valid @RequestBody SetEntryRequest updatedSetEntry) {
+        return setEntryService.update(exerciseLogId, setId, updatedSetEntry);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{setId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteSetEntry(@PathVariable Long id) {
-        setEntryService.delete(id);
-    }
-
-    // ADMIN
-    @GetMapping
-    public List<SetEntryResponse> getAllSetEntries() {
-        return setEntryService.findAll();
+    public void deleteSetEntry(@PathVariable Long exerciseLogId, @PathVariable Long setId) {
+        setEntryService.delete(setId, exerciseLogId);
     }
 }

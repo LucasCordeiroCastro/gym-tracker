@@ -1,21 +1,21 @@
 package com.castro.gym.progress.tracker.domain.service.workout;
 
-import com.castro.gym.progress.tracker.domain.service.AbstractCrudService;
-import com.castro.gym.progress.tracker.exception.NotFoundException;
 import com.castro.gym.progress.tracker.api.workout.dto.request.ExerciseLogRequest;
 import com.castro.gym.progress.tracker.api.workout.dto.request.SetEntryRequest;
 import com.castro.gym.progress.tracker.api.workout.dto.response.ExerciseLogResponse;
-import com.castro.gym.progress.tracker.domain.entity.workout.ExerciseLog;
-import com.castro.gym.progress.tracker.domain.entity.workout.SetEntry;
 import com.castro.gym.progress.tracker.domain.entity.user.User;
 import com.castro.gym.progress.tracker.domain.entity.workout.Exercise;
+import com.castro.gym.progress.tracker.domain.entity.workout.ExerciseLog;
+import com.castro.gym.progress.tracker.domain.entity.workout.SetEntry;
 import com.castro.gym.progress.tracker.domain.entity.workout.Workout;
-import com.castro.gym.progress.tracker.mapper.ExerciseLogMapper;
-import com.castro.gym.progress.tracker.mapper.SetEntryMapper;
 import com.castro.gym.progress.tracker.domain.repository.workout.ExerciseLogRepository;
 import com.castro.gym.progress.tracker.domain.repository.workout.ExerciseRepository;
-import com.castro.gym.progress.tracker.domain.repository.user.UserRepository;
 import com.castro.gym.progress.tracker.domain.repository.workout.WorkoutRepository;
+import com.castro.gym.progress.tracker.domain.service.user.UserAuthorizationHelper;
+import com.castro.gym.progress.tracker.exception.NotFoundException;
+import com.castro.gym.progress.tracker.mapper.ExerciseLogMapper;
+import com.castro.gym.progress.tracker.mapper.SetEntryMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,70 +23,64 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
-public class ExerciseLogService extends AbstractCrudService<
-        ExerciseLog,
-        Long,
-        ExerciseLogRequest,
-        ExerciseLogResponse
-        > {
-
+public class ExerciseLogService {
     private final ExerciseLogRepository exerciseLogRepository;
     private final ExerciseLogMapper exerciseLogMapper;
     private final SetEntryMapper setEntryMapper;
-    private final UserRepository userRepository;
     private final ExerciseRepository exerciseRepository;
     private final WorkoutRepository workoutRepository;
+    private final UserAuthorizationHelper userAuthorizationHelper;
 
-    public ExerciseLogService(ExerciseLogRepository exerciseLogRepository, ExerciseLogMapper exerciseLogMapper, SetEntryMapper setEntryMapper,
-                              UserRepository userRepository, ExerciseRepository exerciseRepository, WorkoutRepository workoutRepository) {
-        super(exerciseLogRepository, exerciseLogMapper::toEntity, exerciseLogMapper::toResponse, exerciseLogMapper::updateFromDto);
-        this.exerciseLogRepository = exerciseLogRepository;
-        this.exerciseLogMapper = exerciseLogMapper;
-        this.setEntryMapper = setEntryMapper;
-        this.userRepository = userRepository;
-        this.exerciseRepository = exerciseRepository;
-        this.workoutRepository = workoutRepository;
-    }
-
-    public List<ExerciseLogResponse> findLogsByUserAndExercise(Long userId, Long exerciseId) {
-        return exerciseLogRepository.findByUserIdAndExerciseIdOrderByDateDesc(userId, exerciseId)
-                .stream()
+    public ExerciseLogResponse findById(Long id) {
+        Long userId = userAuthorizationHelper.getAuthenticatedUserId();
+        return exerciseLogRepository.findByIdAndUserId(id, userId)
                 .map(exerciseLogMapper::toResponse)
-                .toList();
+                .orElseThrow(() -> new NotFoundException("ExerciseLog not found: " + id));
     }
 
-    public List<ExerciseLogResponse> findLogsByUser(Long userId) {
+    public List<ExerciseLogResponse> findLogsByUser() {
+        Long userId = userAuthorizationHelper.getAuthenticatedUserId();
         return exerciseLogRepository.findByUserIdOrderByDateDesc(userId)
                 .stream()
                 .map(exerciseLogMapper::toResponse)
                 .toList();
     }
 
-    @Override
+    public List<ExerciseLogResponse> findLogsByUserAndExercise(Long exerciseId) {
+        Long userId = userAuthorizationHelper.getAuthenticatedUserId();
+        return exerciseLogRepository.findByUserIdAndExerciseIdOrderByDateDesc(userId, exerciseId)
+                .stream()
+                .map(exerciseLogMapper::toResponse)
+                .toList();
+    }
+
     public ExerciseLogResponse create(ExerciseLogRequest dto) {
+        User user = userAuthorizationHelper.getAuthenticatedUser();
         ExerciseLog exerciseLog = exerciseLogMapper.toEntity(dto);
 
-        exerciseLog.setUser(fetchUser(dto.userId()));
+        exerciseLog.setUser(user);
         exerciseLog.setExercise(fetchExercise(dto.exerciseId()));
 
-        if (dto.workoutId() != null) exerciseLog.setWorkout(fetchWorkout(dto.workoutId()));
+        if (dto.workoutId() != null) exerciseLog.setWorkout(fetchWorkout(dto.workoutId(), user.getId()));
 
         if (exerciseLog.getSets() != null) exerciseLog.getSets().forEach(set -> set.setExerciseLog(exerciseLog));
 
         return exerciseLogMapper.toResponse(exerciseLogRepository.save(exerciseLog));
     }
 
-    @Override
     public ExerciseLogResponse update(Long id, ExerciseLogRequest dto) {
-        ExerciseLog exerciseLog = exerciseLogRepository.findById(id)
+        User user = userAuthorizationHelper.getAuthenticatedUser();
+        ExerciseLog exerciseLog = exerciseLogRepository.findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new NotFoundException("ExerciseLog not found: " + id));
 
         exerciseLogMapper.updateFromDto(dto, exerciseLog);
 
-        exerciseLog.setUser(fetchUser(dto.userId()));
+        exerciseLog.setUser(user);
         exerciseLog.setExercise(fetchExercise(dto.exerciseId()));
-        if (dto.workoutId() != null) exerciseLog.setWorkout(fetchWorkout(dto.workoutId()));
+        if (dto.workoutId() != null)
+            exerciseLog.setWorkout(fetchWorkout(dto.workoutId(), user.getId()));
         else exerciseLog.setWorkout(null);
 
         Map<Long, SetEntry> existingSetMap = exerciseLog.getSets().stream()
@@ -111,19 +105,21 @@ public class ExerciseLogService extends AbstractCrudService<
         return exerciseLogMapper.toResponse(exerciseLogRepository.save(exerciseLog));
     }
 
-
-    private User fetchUser(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found: " + userId));
-    }
-
     private Exercise fetchExercise(Long exerciseId) {
         return exerciseRepository.findById(exerciseId)
                 .orElseThrow(() -> new NotFoundException("Exercise not found: " + exerciseId));
     }
 
-    private Workout fetchWorkout(Long workoutId) {
-        return workoutRepository.findById(workoutId)
+    private Workout fetchWorkout(Long workoutId, Long userId) {
+        return workoutRepository.findByIdAndUserId(workoutId, userId)
                 .orElseThrow(() -> new NotFoundException("Workout not found: " + workoutId));
+    }
+
+    public void delete(Long id) {
+        Long userId = userAuthorizationHelper.getAuthenticatedUserId();
+        ExerciseLog exerciseLog = exerciseLogRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new NotFoundException("ExerciseLog not found: " + id));
+
+        exerciseLogRepository.delete(exerciseLog);
     }
 }

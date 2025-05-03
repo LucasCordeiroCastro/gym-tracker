@@ -16,9 +16,9 @@ import java.util.List;
 public class WorkoutController {
     private final WorkoutService workoutService;
 
-    @GetMapping("/user/{userId}")
-    public List<WorkoutResponse> getWorkoutsByUser(@PathVariable Long userId) {
-        return workoutService.getWorkoutsByUser(userId);
+    @GetMapping
+    public List<WorkoutResponse> getWorkoutsByUser() {
+        return workoutService.getWorkoutsByUser();
     }
 
     @PostMapping

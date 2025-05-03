@@ -15,12 +15,12 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 )
 public interface SetEntryMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "difficulty", expression = "java(dto.difficulty() != null ? dto.difficulty() : SetDifficultyEnum.UNSPECIFIED)")
+    @Mapping(target = "difficulty", expression = "java(dto.difficulty() != null ? dto.difficulty() : SetDifficulty.UNSPECIFIED)")
     SetEntry toEntity(SetEntryRequest dto);
 
     @Mapping(target = "volume", expression = "java(entity.getWeight() * entity.getReps())")
     SetEntryResponse toResponse(SetEntry entity);
 
-    @Mapping(target = "difficulty", expression = "java(dto.difficulty() != null ? dto.difficulty() : SetDifficultyEnum.UNSPECIFIED)")
+    @Mapping(target = "difficulty", expression = "java(dto.difficulty() != null ? dto.difficulty() : SetDifficulty.UNSPECIFIED)")
     void updateFromDto(SetEntryRequest dto, @MappingTarget SetEntry entity);
 }

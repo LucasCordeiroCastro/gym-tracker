@@ -1,6 +1,6 @@
 package com.castro.gym.progress.tracker.api.user.dto.request;
 
-import com.castro.gym.progress.tracker.domain.entity.user.GenderEnum;
+import com.castro.gym.progress.tracker.domain.enums.Gender;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -17,7 +17,7 @@ public record CreateUserRequest(
         String password,
 
         @NotNull(message = "Gender is required")
-        GenderEnum gender,
+        Gender gender,
 
         @NotNull(message = "Height is required")
         Double height,

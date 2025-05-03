@@ -8,7 +8,6 @@ import java.util.List;
 
 public record WorkoutRequest(
         @NotBlank(message = "Name is required") String name,
-        @NotNull(message = "User ID is required") Long userId,
         @Nullable List<Long> exerciseIds,
         String description
 ) {

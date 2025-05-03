@@ -1,5 +1,6 @@
 package com.castro.gym.progress.tracker.domain.entity.workout;
 
+import com.castro.gym.progress.tracker.domain.enums.SetDifficulty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +24,7 @@ public class SetEntry {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private SetDifficultyEnum difficulty = SetDifficultyEnum.UNSPECIFIED;
+    private SetDifficulty difficulty = SetDifficulty.UNSPECIFIED;
 
     @ManyToOne
     private ExerciseLog exerciseLog;

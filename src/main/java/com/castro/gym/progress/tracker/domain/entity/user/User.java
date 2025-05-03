@@ -2,6 +2,7 @@ package com.castro.gym.progress.tracker.domain.entity.user;
 
 import com.castro.gym.progress.tracker.domain.entity.workout.ExerciseLog;
 import com.castro.gym.progress.tracker.domain.entity.workout.Workout;
+import com.castro.gym.progress.tracker.domain.enums.Gender;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,8 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     @Column(nullable = false)
@@ -32,7 +34,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private GenderEnum gender;
+    private Gender gender;
 
     @Column(nullable = false)
     private Double height;

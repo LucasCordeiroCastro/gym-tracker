@@ -1,6 +1,6 @@
 package com.castro.gym.progress.tracker.api.user.dto.request;
 
-import com.castro.gym.progress.tracker.domain.entity.user.GenderEnum;
+import com.castro.gym.progress.tracker.domain.enums.Gender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Past;
 
@@ -12,7 +12,7 @@ public record UpdateUserRequest(
 
         String name,
 
-        GenderEnum gender,
+        Gender gender,
 
         Double height,
 

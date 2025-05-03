@@ -1,17 +1,18 @@
 package com.castro.gym.progress.tracker.domain.service.workout;
 
-import com.castro.gym.progress.tracker.domain.service.AbstractCrudService;
-import com.castro.gym.progress.tracker.exception.NotFoundException;
 import com.castro.gym.progress.tracker.api.workout.dto.request.WorkoutRequest;
 import com.castro.gym.progress.tracker.api.workout.dto.response.WorkoutResponse;
 import com.castro.gym.progress.tracker.domain.entity.user.User;
 import com.castro.gym.progress.tracker.domain.entity.workout.Exercise;
 import com.castro.gym.progress.tracker.domain.entity.workout.Workout;
 import com.castro.gym.progress.tracker.domain.entity.workout.WorkoutExercise;
-import com.castro.gym.progress.tracker.mapper.WorkoutMapper;
-import com.castro.gym.progress.tracker.domain.repository.workout.ExerciseRepository;
 import com.castro.gym.progress.tracker.domain.repository.user.UserRepository;
+import com.castro.gym.progress.tracker.domain.repository.workout.ExerciseRepository;
 import com.castro.gym.progress.tracker.domain.repository.workout.WorkoutRepository;
+import com.castro.gym.progress.tracker.domain.service.user.UserAuthorizationHelper;
+import com.castro.gym.progress.tracker.exception.NotFoundException;
+import com.castro.gym.progress.tracker.mapper.WorkoutMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,40 +22,35 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
-public class WorkoutService extends AbstractCrudService<
-        Workout,
-        Long,
-        WorkoutRequest,
-        WorkoutResponse
-        > {
+public class WorkoutService {
 
     private final UserRepository userRepository;
     private final ExerciseRepository exerciseRepository;
     private final WorkoutRepository workoutRepository;
     private final WorkoutMapper workoutMapper;
+    private final UserAuthorizationHelper userAuthorizationHelper;
 
-    public WorkoutService(WorkoutRepository workoutRepository, UserRepository userRepository,
-                          ExerciseRepository exerciseRepository, WorkoutMapper workoutMapper) {
-        super(workoutRepository, workoutMapper::toEntity, workoutMapper::toResponse, workoutMapper::updateFromDto);
-        this.workoutRepository = workoutRepository;
-        this.userRepository = userRepository;
-        this.exerciseRepository = exerciseRepository;
-        this.workoutMapper = workoutMapper;
-    }
-
-    public List<WorkoutResponse> getWorkoutsByUser(Long userId) {
+    public List<WorkoutResponse> getWorkoutsByUser() {
+        Long userId = userAuthorizationHelper.getAuthenticatedUserId();
         return workoutRepository.findByUserId(userId)
                 .stream()
                 .map(workoutMapper::toResponse)
                 .toList();
     }
 
-    @Override
-    public WorkoutResponse create(WorkoutRequest dto) {
-        Workout workout = workoutMapper.toEntity(dto);
+    public WorkoutResponse findById(Long id) {
+        Long userId = userAuthorizationHelper.getAuthenticatedUserId();
+        Workout workout = workoutRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new NotFoundException("Workout not found: " + id));
 
-        User user = fetchUser(dto.userId());
+        return workoutMapper.toResponse(workout);
+    }
+
+    public WorkoutResponse create(WorkoutRequest dto) {
+        User user = userAuthorizationHelper.getAuthenticatedUser();
+        Workout workout = workoutMapper.toEntity(dto);
         workout.setUser(user);
 
         List<WorkoutExercise> workoutExercises = buildWorkoutExercises(dto.exerciseIds(), workout);
@@ -63,25 +59,17 @@ public class WorkoutService extends AbstractCrudService<
         return workoutMapper.toResponse(workoutRepository.save(workout));
     }
 
-    @Override
     public WorkoutResponse update(Long id, WorkoutRequest dto) {
-        Workout workout = workoutRepository.findById(id)
+        Long userId = userAuthorizationHelper.getAuthenticatedUserId();
+        Workout workout = workoutRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new NotFoundException("Workout not found: " + id));
 
         workoutMapper.updateFromDto(dto, workout);
 
-        User user = fetchUser(dto.userId());
-        workout.setUser(user);
-
         List<WorkoutExercise> workoutExercises = buildWorkoutExercises(dto.exerciseIds(), workout);
         workout.setExercises(workoutExercises);
 
         return workoutMapper.toResponse(workoutRepository.save(workout));
-    }
-
-    private User fetchUser(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found: " + userId));
     }
 
     private List<WorkoutExercise> buildWorkoutExercises(List<Long> exerciseIds, Workout workout) {
@@ -110,4 +98,11 @@ public class WorkoutService extends AbstractCrudService<
         return workoutExercises;
     }
 
+    public void delete(Long id) {
+        Long userId = userAuthorizationHelper.getAuthenticatedUserId();
+        Workout workout = workoutRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new NotFoundException("Workout not found: " + id));
+
+        workoutRepository.delete(workout);
+    }
 }
