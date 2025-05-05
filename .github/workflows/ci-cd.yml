@@ -33,28 +33,28 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
     steps:
-      <<: *setup-steps
-        - name: Build with Maven
-          run: mvn -B clean verify
+      - <<: *setup-steps
+      - name: Build with Maven
+        run: mvn -B clean verify
 
-        - name: Run tests
-          run: mvn test
+      - name: Run tests
+        run: mvn test
 
   sonar:
     name: SonarQube Analysis
     needs: build
     runs-on: ubuntu-latest
     steps:
-      <<: *setup-steps
-        - name: Cache SonarQube scanner
-          uses: actions/cache@v3
-          with:
-            path: ~/.sonar/cache
-            key: ${{ runner.os }}-sonar
+      - <<: *setup-steps
+      - name: Cache SonarQube scanner
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
 
-        - name: Run SonarQube Scanner
-          run: |
-            mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-              -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
-              -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-              -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      - name: Run SonarQube Scanner
+        run: |
+          mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
