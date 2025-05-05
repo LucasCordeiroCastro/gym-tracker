@@ -2,7 +2,6 @@ package com.castro.gym.progress.tracker.api.workout.dto.request;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
